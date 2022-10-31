@@ -18,7 +18,7 @@ void ReadFile(char* filename, struct Family* f1, struct Family* f2)
 
 	// Close the file
 	fclose(inputFile);
-}
+} // ReadFiel
 
 void ReadFamily(struct Family* f, FILE* inputFile)
 {
@@ -33,7 +33,7 @@ void ReadFamily(struct Family* f, FILE* inputFile)
 	{
 		ReadSet(&f->sets[i], inputFile);
 	}
-}
+} // ReadFamily
 
 void ReadSet(struct Set* s, FILE* inputFile)
 {
@@ -48,4 +48,4 @@ void ReadSet(struct Set* s, FILE* inputFile)
 	{
 		fscanf_s(inputFile, "%d", &s->elements[i]);
 	}
-}
+} // ReadSet

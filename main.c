@@ -5,6 +5,7 @@
 #include "include/utils.h"
 #include "include/data.h"
 
+#include "include/editDistance.h"
 #include "include/jaccardDistance.h"
 
 FILE* inputFile;
@@ -29,7 +30,8 @@ int main()
 	PrintFamily(&f2);
 
 	// Compute the distance between families
-    distance2 = ComputeFamilyDistance_Jaccard(&f1, &f2);
+    distance1 = ComputeFamilyDistance_Edit(&f1, &f2);
+    //distance2 = ComputeFamilyDistance_Jaccard(&f1, &f2);
 
 
 	// Free memory

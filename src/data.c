@@ -7,7 +7,7 @@ void PrintFamily(struct Family* f)
 	{
 		PrintSet(&f->sets[i]);
 	}
-}
+} // PrintFamily
 
 void PrintSet(struct Set* s)
 {
@@ -18,7 +18,7 @@ void PrintSet(struct Set* s)
 		printf("%d ", s->elements[i]);
 	}
 	printf("\n");
-}
+} // PrintSet
 
 void DeleteFamily(struct Family* f)
 {
@@ -30,10 +30,10 @@ void DeleteFamily(struct Family* f)
 
 	// Delete sets array
 	free(f->sets);
-}
+} // DeleteFamily
 
 void DeleteSet(struct Set* s)
 {
 	// Delete elements array
 	free(s->elements);
-}
+} // DeleteSet

@@ -3,4 +3,4 @@ project(SetsDistance C)
 
 set(CMAKE_C_STANDARD 11)
 
-add_executable(SetsDistance main.c src/utils.c include/utils.h include/defines.h src/fileParser.c include/fileParser.h src/data.c include/data.h "include/jaccardDistance.h" "src/jaccardDistance.c")
+add_executable(SetsDistance main.c src/utils.c include/utils.h include/defines.h src/fileParser.c include/fileParser.h src/data.c include/data.h "include/jaccardDistance.h" "src/jaccardDistance.c" "include/editDistance.h" "src/editDistance.c")
