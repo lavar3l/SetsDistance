@@ -214,13 +214,14 @@ int ComputeAssignmentCost()
 
 	// Compute the optimal cost of the assignment based on the generated matching
 	result = 0;
-	printf("Matching from hungarian algorithm:\n");
+	trace(2, "Assignment based on Hungarian algorithm:\n");
+	trace(2, "\tFamily 1\tFamily 2\tEdit distance\n");
 	for (int i = 0; i < gSize; i++)
 	{
-		printf("%d ", matchX[i]);
+		trace(2, "\t%d\t\t%d\t\t%d\n", i, matchX[i], gCost[i][matchX[i]]);
 		result += gCost[i][matchX[i]];
 	}
-	printf("\n");
+	trace(2, "\n\n");
 
 	return result;
 }

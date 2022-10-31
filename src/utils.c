@@ -1,7 +1,9 @@
 #include "../include/utils.h"
+#include "../include/defines.h"
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 
 void ExitError(char* message)
 {
@@ -10,18 +12,13 @@ void ExitError(char* message)
     exit(-1);
 } // ExitError
 
-int Min3(int a, int b, int c)
+void trace(int level, const char* format, ...)
 {
-	if(a <= b && a <= c)
+	if (level < gTraceLevel)
 	{
-		return a;
+		va_list args;
+		va_start(args, format);
+		vprintf(format, args);
+		va_end(args);
 	}
-	else if (b <= a && b <= c)
-	{
-		return b;
-	}
-	else
-	{
-		return c;
-	}
-} // Min3
+} // Trace

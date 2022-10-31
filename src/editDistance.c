@@ -125,13 +125,29 @@ int ComputeEditDistanceFamilies(int** matrix, int size)
 
 void PrintEditDistanceMatrix(int** matrix, int size)
 {
-	printf("Edit distance matrix:\n");
+	trace(2, "Edit distance matrix based on Levenshtein distance:\n");
+	trace(2, "\tRows - sets from family 1\n\tColumns - sets from family 2\n\n");
+
+	trace(2, "\t\t");
 	for (int i = 0; i < size; i++)
 	{
+		trace(2, "%d\t", i);
+	}
+	trace(2, "\n\t\t");
+	for (int i = 0; i < size; i++)
+	{
+		trace(2, "_\t");
+	}
+	trace(2, "\n");
+		
+	for (int i = 0; i < size; i++)
+	{
+		trace(2, "\t%d |\t", i);
 		for (int j = 0; j < size; j++)
 		{
-			printf("%d ", matrix[i][j]);
+			trace(2, "%d\t", matrix[i][j]);
 		}
-		printf("\n");
+		trace(2, "\n");
 	}
+	trace(2, "\n\n");
 } // PrintEditDistanceMatrix

@@ -9,6 +9,7 @@
 #include "include/jaccardDistance.h"
 
 FILE* inputFile;
+int gTraceLevel = 0;
 
 int main()
 {
@@ -21,6 +22,10 @@ int main()
     printf("Enter the name of the file with the set data: ");
     scanf_s("%s", filename, (unsigned)_countof(filename));
     printf("%s\n", filename);
+
+    // Specify debug level
+	printf("Enter the debug level (0-3): ");
+    scanf("%d", &gTraceLevel);
 
     // Parse data from file
 	ReadFile(filename, &f1, &f2);
