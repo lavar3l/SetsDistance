@@ -10,13 +10,16 @@
 
 int  AssignmentProblemSolver(int** costMatrix, int size);
 
-void Iterate();
+int  ComputeAssignmentCost();
+
+void InitializeMatching();
+void FirstMatching();
+
+void InitializeSets();
 
 void InitializeLabels();
 void UpdateLabels();
 
 void AddToTree(int currentVertex, int prevVertex);
-
-void ReverseValues();
 
 #endif // HUNGARIAN_H

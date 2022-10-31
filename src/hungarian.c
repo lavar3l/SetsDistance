@@ -1,6 +1,7 @@
 #include "../include/hungarian.h"
 
 #define INF 1000000000 // unreachable (inifite) value
+#define N 100
 
 int gSize; // number of workers and assignments
 int** gCost; // matrix with the cost of performing each assignment by each worker
@@ -9,8 +10,8 @@ int gMaxMatch; // number of vertices in the current matching
 int* lx; // labels of X part
 int* ly; // labels of Y part
 
-int* xy; // xy[x] - vertex matched with x,
-int* yx; // yx[y] - vertex matched with y
+int* matchX; // xy[x] - vertex matched with x,
+int* matchY; // yx[y] - vertex matched with y
 
 bool* S; // set S in the algorithm
 bool* T; // set T in the algorithm
@@ -28,16 +29,12 @@ int AssignmentProblemSolver(int** costMatrix, int size)
 	gSize = size;
 	gCost = costMatrix;
 
-	// Reverse values in order to transform minimum-weighted matching problem
-	// into maximum-weighted matching problem
-	ReverseValues();
-
 	// Initalize auxiliary structures
 	lx = (int*)malloc(gSize * sizeof(int)); // labels of X part
 	ly = (int*)malloc(gSize * sizeof(int)); // labels of Y part
-	
-	xy = (int*)malloc(gSize * sizeof(int)); // xy[x] - vertex matched with x
-	yx = (int*)malloc(gSize * sizeof(int)); // yx[y] - vertex matched with y
+
+	matchX = (int*)malloc(gSize * sizeof(int)); // xy[x] - vertex matched with x
+	matchY = (int*)malloc(gSize * sizeof(int)); // yx[y] - vertex matched with y
 
 	S = (bool*)malloc(gSize * sizeof(bool)); // set S in the algorithm
 	T = (bool*)malloc(gSize * sizeof(bool)); // set T in the algorithm
@@ -47,206 +44,248 @@ int AssignmentProblemSolver(int** costMatrix, int size)
 
 	prev = (int*)malloc(gSize * sizeof(int)); // Alternating paths
 
-	// Prepare initial state
-	result = 0; // optimal cost of the assignment
-	gMaxMatch = 0; // number of vertices in the current matching
-
-	// Initialize labels
-	memset(xy, -1, sizeof(xy));
-	memset(yx, -1, sizeof(xy));
+	// Prepare matching and labels 
+	InitializeMatching();
 	InitializeLabels();
 
-	// Realize the Hungarian algorith
-	Iterate();
+	// Prepare initial state
+	gMaxMatch = 0;
+	FirstMatching();
 
-	// Compute the optimal cost of the assignment
-	for (int x = 0; x < gSize; x++)
-	{
-		result += gCost[x][xy[x]];
-	}
+	// Realize the Hungarian algorith
+	result = ComputeAssignmentCost();
 
 	// Free memory	
 	free(lx);
 	free(ly);
-	
-	free(xy);
-	free(yx);
-	
+
+	free(matchX);
+	free(matchY);
+
 	free(S);
 	free(T);
-	
+
 	free(slack);
 	free(slackX);
-	
+
 	free(prev);
 
-	// Reverse back the values
-	ReverseValues();
-
-	// Return result (multiplied by -1 to get answer for minimum cost problem)
-	return -result;
+	// Return result
+	return result;
 } // AssignmentProblemSolver
 
-void Iterate()
+int ComputeAssignmentCost()
 {
 	int* q;
-	int write, read;
-	int root;
-
-	// Check whether all tasks are assigned to workers
-	if (gMaxMatch == gSize)
-	{
-		return;
-	}
+	int start = 0, end = 0;
+	int root, x, y;
+	int result;
 
 	// Initialize queue for BFS traversal
-	q = (int*)malloc(gSize * sizeof(int));
-	write = 0;
-	read = 0;
+	q = (int*)malloc(1000000 * sizeof(int));
 
-	// Initialize sets and alternating path
-	memset(S, false, sizeof(S));
-	memset(T, false, sizeof(T));
-	memset(prev, -1, sizeof(prev));
-
-	// Find tree root
-	for (int x = 0; x < gSize; x++)
+	// Iterate until all tasks are assigned to workers
+	while (gMaxMatch != gSize)
 	{
-		if (xy[x] == -1)
+		// Clear queue
+		start = 0;
+		end = 0;
+		
+		// Initialize sets
+		InitializeSets();
+
+		// Find tree root
+		root = 0;
+		for (x = 0; x < gSize; x++)
 		{
-			q[write++] = root = x;
-			prev[x] = -2;
-			S[x] = true;
-			break;
+			if (matchX[x] == -1)
+			{
+				q[end++] = x;
+				root = x;
+				prev[x] = -2;
+				S[x] = true;
+
+				break;
+			}
 		}
-	}
-
-	// Initialize slack array
-	for (int y = 0; y < gSize; y++)
-	{
-		slack[y] = lx[root] + ly[y] - gCost[root][y];
-		slackX[y] = root;
-	}
-
-	// Main interation cycle
-	int y = 0;
-	int x = 0;
-	while (true)
-	{
-		// Build tree with BFS traversal
-		while (read < write)
+		
+		// Initialize slack array
+		for (int y = 0; y < gSize; y++)
 		{
-			// Retrieve next vertex from queue
-			x = q[read++];
+			slack[y] = gCost[root][y] - lx[root] - ly[y];
+			slackX[y] = root;
+		}
+		
+		// Main iteration cycle
+		while (true)
+		{
+			// Build tree with BFS traversal
+			while (start < end)
+			{
+				// Retrieve next vertex from queue
+				x = q[start++];
+				
+				// Iterate through all edges in graph
+				for (y = 0; y < gSize; y++)
+				{
+					if (gCost[x][y] == lx[x] + ly[y] && T[y] == false)
+					{
+						if (matchY[y] == -1)
+						{
+							// Found exposed vertex in Y part, as a result
+							// augmenting path is found.
+							break;
+						}
+						
+						// In other case, add the vertex to queue
+						T[y] = true;
+						q[end++] = matchY[y];
 
-			// Iterate through all edges in graph
+						// Add edge between (x, y) and (y, yx[y]) to the tree
+						AddToTree(matchY[y], x);
+					}
+
+				}
+				
+				if (y < gSize)
+				{
+					// Found augmenting path
+					break;
+				}
+			}
+			
+			if (y < gSize)
+			{
+				// Found augmenting path
+				break;
+			}
+			
+			// If there is no augmenting path, then improve the labeling
+			UpdateLabels();
+
 			for (y = 0; y < gSize; y++)
 			{
-				if (gCost[x][y] == lx[x] + ly[y] && T[y] == false)
+				if (T[y] == false && slack[y] == 0)
 				{
-					if (yx[y] == -1)
+					if (matchY[y] == -1)
 					{
 						// Found exposed vertex in Y part, as a result
 						// augmenting path is found.
+						x = slackX[y];
 						break;
 					}
+					else
+					{
+						// In other case, add the vertex to queue
+						T[y] = true;
+						if (S[matchY[y]] == false)
+						{
+							// Add vertex to queue
+							q[end++] = matchY[y];
 
-					// In other case, add the vertex to queue
-					T[y] = true;
-					q[write++] = yx[y];
-					
-					// Add edge between (x, y) and (y, yx[y]) to the tree
-					AddToTree(yx[y], x);
+							// Add edge between (x, y) and (y, yx[y]) to the tree
+							AddToTree(matchY[y], slackX[y]);
+						}
+					}
 				}
 			}
-
+			
 			if (y < gSize)
 			{
 				// Found augmenting path
 				break;
 			}
 		}
-		
-		if (y < gSize)
-		{
-			// Found augmenting path
-			break;
-		}
 
-		// If there is no augmenting path, then improve the labeling
-		UpdateLabels();
-		
-		// Clear queue
-		write = 0;
-		read = 0;
-
-		//
-		for (y = 0; y < gSize; y++)
-		{
-			if (T[y] == false && slack[y] == 0)
-			{
-				if (yx[y] == -1)
-				{
-					// Found exposed vertex in Y part, as a result
-					// augmenting path is found.
-					x = slackX[y];
-					break;
-				}
-				else
-				{
-					// In other case, add the vertex to queue
-					T[y] = true;
-					if (S[yx[y]] == false)
-					{
-						// Add vertex to queue
-						q[write++] = yx[y];
-						
-						// Add edge between (x, y) and (y, yx[y]) to the tree
-						AddToTree(yx[y], slackX[y]);
-					}
-				}
-			}
-		}
-
-		if (y < gSize)
-		{
-			// Found augmenting path
-			break;
-		}
-	}
-
-	// Check if augmenting path is found
-	if (y < gSize)
-	{
 		// Increment matching
 		gMaxMatch++;
-		
-		// Inverse edges along the augmentating path
-		for (int nX = x, nY = y, tempY; nX != -2; nX = prev[nX], nY = tempY)
-		{
-			tempY = xy[nX];
-			yx[nY] = nX;
-			xy[nX] = nY;
-		}
 
-		// Reiterate the algorithm
-		Iterate();
+		// Inverse edges along the augmentating path
+		for (int newX = x, newY = y, tempY; newX != -2; newX = prev[newX], newY = tempY)
+		{
+			tempY = matchX[newX];
+			matchY[newY] = newX;
+			matchX[newX] = newY;
+		}
 	}
-	
+
 	// Free memory
 	free(q);
+
+	// Compute the optimal cost of the assignment based on the generated matching
+	result = 0;
+	printf("Matching from hungarian algorithm:\n");
+	for (int i = 0; i < gSize; i++)
+	{
+		printf("%d ", matchX[i]);
+		result += gCost[i][matchX[i]];
+	}
+	printf("\n");
+
+	return result;
 }
 
-void InitializeLabels()
+void InitializeMatching()
 {
-	memset(lx, 0, sizeof(lx));
-	memset(ly, 0, sizeof(ly));
+	for (int i = 0; i < gSize; i++)
+	{
+		matchX[i] = -1;
+		matchY[i] = -1;
+	}
+}
+
+void FirstMatching()
+{
 	for (int x = 0; x < gSize; x++)
 	{
 		for (int y = 0; y < gSize; y++)
 		{
-			lx[x] = max(lx[x], gCost[x][y]);
+			if (gCost[x][y] != lx[x] + ly[y] || matchY[y] != -1) continue;
+			matchX[x] = y;
+			matchY[y] = x;
+			gMaxMatch++;
+			break;
 		}
+	}
+}
+
+void InitializeSets()
+{
+	for (int i = 0; i < gSize; i++)
+	{
+		S[i] = false;
+		T[i] = false;
+	}
+}
+
+void InitializeLabels()
+{
+	for (int x = 0; x < gSize; x++)
+	{
+		int minRowCost = gCost[x][0];
+		for (int y = 0; y < gSize; y++)
+		{
+			minRowCost = min(minRowCost, gCost[x][y]);
+			if (minRowCost == 0)
+			{
+				break;
+			}
+		}
+		lx[x] = minRowCost;
+	}
+
+	for (int y = 0; y < gSize; y++)
+	{
+		int minColCost = gCost[0][y] - lx[0];
+		for (int x = 0; x < gSize; x++)
+		{
+			minColCost = min(minColCost, gCost[x][y] - lx[x]);
+			if (minColCost == 0)
+			{
+				break;
+			}
+		}
+		ly[y] = minColCost;
 	}
 }
 
@@ -268,7 +307,7 @@ void UpdateLabels()
 	{
 		if (S[x] == true)
 		{
-			lx[x] -= delta;
+			lx[x] += delta;
 		}
 	}
 
@@ -277,7 +316,7 @@ void UpdateLabels()
 	{
 		if (T[y] == true)
 		{
-			ly[y] += delta;
+			ly[y] -= delta;
 		}
 	}
 
@@ -302,21 +341,10 @@ void AddToTree(int currentVertex, int prevVertex)
 	// Update slack on modification of S set
 	for (int y = 0; y < gSize; y++)
 	{
-		if (lx[currentVertex] + ly[y] - gCost[currentVertex][y] < slack[y])
+		if (gCost[currentVertex][y] - lx[currentVertex] - ly[y] < slack[y])
 		{
-			slack[y] = lx[currentVertex] + ly[y] - gCost[currentVertex][y];
+			slack[y] = gCost[currentVertex][y] - lx[currentVertex] - ly[y];
 			slackX[y] = currentVertex;
-		}
-	}
-}
-
-void ReverseValues()
-{
-	for (int i = 0; i < gSize; i++)
-	{
-		for (int j = 0; j < gSize; j++)
-		{
-			gCost[i][j] = -gCost[i][j];
 		}
 	}
 }
