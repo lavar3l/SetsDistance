@@ -5,12 +5,15 @@
 #include "include/utils.h"
 #include "include/data.h"
 
+#include "include/jaccardDistance.h"
+
 FILE* inputFile;
 
 int main()
 {
     char filename[MAX_FILE_NAME];
 	struct Family f1, f2;
+    int distance1 = 0, distance2 = 0;
 
     // Read the file name from the user
     printf("Enter the name of the file with the set data: ");
@@ -24,6 +27,10 @@ int main()
 	// Debug print
     PrintFamily(&f1);
 	PrintFamily(&f2);
+
+	// Compute the distance between families
+    distance2 = ComputeFamilyDistance_Jaccard(&f1, &f2);
+
 
 	// Free memory
     DeleteFamily(&f1);
