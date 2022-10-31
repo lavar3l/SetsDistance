@@ -1,4 +1,5 @@
 #include "../include/editDistance.h"
+#include "../include/hungarian.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -23,6 +24,7 @@ int ComputeFamilyDistance_Edit(struct Family* f1, struct Family* f2)
 	PrintEditDistanceMatrix(editDistance, size);
 
 	// Compute editorial distance between families
+	// using the Hungarian algorithm for the assignment problem
 	distance = ComputeEditDistanceFamilies(editDistance, size);
 
 	// Free memory
@@ -118,8 +120,8 @@ int ComputeEditDistanceSets(struct Set* s1, struct Set* s2)
 
 int ComputeEditDistanceFamilies(int** matrix, int size)
 {
-	return 0;
-}
+	return AssignmentProblemSolver(matrix, size);
+} // ComputeEditDistanceFamilies
 
 void PrintEditDistanceMatrix(int** matrix, int size)
 {
