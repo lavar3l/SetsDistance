@@ -13,7 +13,7 @@ int main()
 {
     char filename[MAX_FILE_NAME];
 	struct Family f1, f2;
-    int distance1 = 0, distance2 = 0;
+    double distance1 = 0, distance2 = 0;
 
     // Read the file name from the user
     printf("Enter the name of the file with the set data: ");

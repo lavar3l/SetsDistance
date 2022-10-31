@@ -2,12 +2,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int ComputeFamilyDistance_Jaccard(struct Family* f1, struct Family* f2)
+double ComputeFamilyDistance_Jaccard(struct Family* f1, struct Family* f2)
 {
-	int distance = 0;
-	int size;
-	int maxValue;
 	struct JaccardFamily jf1, jf2;
+	int size, maxValue;
+	int sum, intersection;
+	double distance;
 
 	// Compute the size of the Jaccard family
 	size = max(f1->size, f2->size);
@@ -30,8 +30,14 @@ int ComputeFamilyDistance_Jaccard(struct Family* f1, struct Family* f2)
 	{
 		printf("%s\n", jf2.sets[i]);
 	}
+
+	// Calculate Jaccard distance between families
+	sum = UnionJaccardFamilies(&jf1, &jf2);
+	intersection = IntersectionJaccardFamilies(&jf1, &jf2);
+	distance = ((double)sum - (double)intersection) / (double)sum;
+	printf("%d %d %f\n", sum, intersection, distance);
 	
-	return 0;
+	return distance;
 } // ComputeFamilyDistance_Jaccard
 
 int GetMaxValueFromSets(struct Family* f)
@@ -114,3 +120,57 @@ int CompareJaccardSets(const void* a, const void* b)
 	// Use standard string comparison
 	return strcmp(*(char**)a, *(char**)b);
 } // CompareJaccardSets
+
+int UnionJaccardFamilies(struct JaccardFamily* jf1, struct JaccardFamily* jf2)
+{
+	int count = 0;
+	int i = 0, j = 0;
+	int cmp;
+
+	while (i < jf1->size && j < jf2->size)
+	{
+		cmp = strcmp(jf1->sets[i], jf2->sets[j]);
+
+		if (cmp < 0)
+		{
+			count++;
+			i++;
+		}
+		else if (cmp > 0)
+		{
+			count++;
+			j++;
+		}
+		else
+		{
+			count++;
+			i++;
+			j++;
+		}
+	}
+
+	return count;
+} // UnionJaccardFamilies
+
+int IntersectionJaccardFamilies(struct JaccardFamily* jf1, struct JaccardFamily* jf2)
+{
+	int count = 0;
+	int i = 0, j = 0;
+	int cmp;
+	
+	while (i < jf1->size && j < jf2->size)
+	{
+		cmp = strcmp(jf1->sets[i], jf2->sets[j]);
+		
+		if (cmp < 0) i++;
+		else if (cmp > 0) j++;
+		else
+		{
+			count++;
+			i++;
+			j++;
+		}
+	}
+	
+	return count;
+} // IntersectionJaccardFamilies
