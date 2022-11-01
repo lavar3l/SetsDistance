@@ -1,23 +1,25 @@
 #include "../include/data.h"
+#include "../include/utils.h"
 
 void PrintFamily(struct Family* f)
 {
-	printf("Family with %d sets:\n", f->size);
+	trace(1, STD, "Family with %d sets:\n", f->size);
 	for (int i = 0; i < f->size; i++)
 	{
 		PrintSet(&f->sets[i]);
 	}
+	trace(1, STD, "\n");
 } // PrintFamily
 
 void PrintSet(struct Set* s)
 {
-	printf("\tSet with %d elements:\n", s->size);
-	printf("\t\t");
+	trace(1, STD, "\tSet with %d elements:\n", s->size);
+	trace(1, STD, "\t\t");
 	for (int i = 0; i < s->size; i++)
 	{
-		printf("%d ", s->elements[i]);
+		trace(1, STD, "%d ", s->elements[i]);
 	}
-	printf("\n");
+	trace(1, STD, "\n");
 } // PrintSet
 
 void DeleteFamily(struct Family* f)

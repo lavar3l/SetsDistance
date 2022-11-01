@@ -22,5 +22,7 @@ int    CompareJaccardSets(const void* a, const void* b);
 int    UnionJaccardFamilies(struct JaccardFamily* jf1, struct JaccardFamily* jf2);
 int    IntersectionJaccardFamilies(struct JaccardFamily* jf1, struct JaccardFamily* jf2);
 
+void   PrintJaccardFamily(struct JaccardFamily* jf, int no);
+
 
 #endif // JACCARD_DISTANCE_H

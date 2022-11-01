@@ -74,7 +74,7 @@ int AssignmentProblemSolver(int** costMatrix, int size)
 	return result;
 } // AssignmentProblemSolver
 
-int ComputeAssignmentCost()
+int ComputeAssignmentCost(void)
 {
 	int* q;
 	int start = 0, end = 0;
@@ -82,7 +82,7 @@ int ComputeAssignmentCost()
 	int result;
 
 	// Initialize queue for BFS traversal
-	q = (int*)malloc(1000000 * sizeof(int));
+	q = (int*)malloc(gSize * sizeof(int));
 
 	// Iterate until all tasks are assigned to workers
 	while (gMaxMatch != gSize)
@@ -214,28 +214,28 @@ int ComputeAssignmentCost()
 
 	// Compute the optimal cost of the assignment based on the generated matching
 	result = 0;
-	trace(2, "Assignment based on Hungarian algorithm:\n");
-	trace(2, "\tFamily 1\tFamily 2\tEdit distance\n");
+	trace(2, TRACE_INTERNAL, "Assignment based on Hungarian algorithm:\n");
+	trace(2, STD, "\tFamily 1\tFamily 2\tEdit distance\n");
 	for (int i = 0; i < gSize; i++)
 	{
-		trace(2, "\t%d\t\t%d\t\t%d\n", i, matchX[i], gCost[i][matchX[i]]);
+		trace(2, STD, "\t%d\t\t%d\t\t%d\n", i, matchX[i], gCost[i][matchX[i]]);
 		result += gCost[i][matchX[i]];
 	}
-	trace(2, "\n\n");
+	trace(2, STD, "\n\n");
 
 	return result;
-}
+} // ComputeAssignmentCost
 
-void InitializeMatching()
+void InitializeMatching(void)
 {
 	for (int i = 0; i < gSize; i++)
 	{
 		matchX[i] = -1;
 		matchY[i] = -1;
 	}
-}
+} // InitializeMatching
 
-void FirstMatching()
+void FirstMatching(void)
 {
 	for (int x = 0; x < gSize; x++)
 	{
@@ -248,18 +248,18 @@ void FirstMatching()
 			break;
 		}
 	}
-}
+} // FirstMatching
 
-void InitializeSets()
+void InitializeSets(void)
 {
 	for (int i = 0; i < gSize; i++)
 	{
 		S[i] = false;
 		T[i] = false;
 	}
-}
+} // InitializeSets
 
-void InitializeLabels()
+void InitializeLabels(void)
 {
 	for (int x = 0; x < gSize; x++)
 	{
@@ -288,9 +288,9 @@ void InitializeLabels()
 		}
 		ly[y] = minColCost;
 	}
-}
+} // InitializeLabels
 
-void UpdateLabels()
+void UpdateLabels(void)
 {
 	int delta = INF;
 
@@ -329,7 +329,7 @@ void UpdateLabels()
 			slack[y] -= delta;
 		}
 	}
-}
+} // UpdateLabels
 
 void AddToTree(int currentVertex, int prevVertex)
 {
@@ -348,4 +348,4 @@ void AddToTree(int currentVertex, int prevVertex)
 			slackX[y] = currentVertex;
 		}
 	}
-}
+} // AddToTree

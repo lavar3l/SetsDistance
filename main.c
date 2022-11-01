@@ -51,20 +51,20 @@ int main(int argc, const char **argv)
     }
 
     // Print parsed arguments
-    trace(0, MAIN_DESCRIPTION);
-    trace(0, EXTRA_DESCRIPTION);
+    trace(0, STD, MAIN_DESCRIPTION);
+    trace(0, STD, EXTRA_DESCRIPTION);
 	
-    trace(0, "Parsed command line arguments:\n");
-	trace(0, "* Data file path: %s\n", filename);
-	trace(0, "* Verbose level: %d\n", gTraceLevel);
+    trace(1, TRACE_HEADER, "Parsed command line arguments:\n");
+	trace(1, STD, "* Data file path: %s\n", filename);
+	trace(1, STD, "* Verbose level: %d\n\n", gTraceLevel);
 	
 	
     // -------------------- Parse data from file --------------------
     // Parse data from file and initialize families
 	ReadFile(filename, &f1, &f2);
-    printf("Input file successfully parsed.\n");
 
 	// Print parsed family data
+    trace(1, TRACE_HEADER, "Parsed family data:\n");
     PrintFamily(&f1);
 	PrintFamily(&f2);
 
@@ -72,8 +72,9 @@ int main(int argc, const char **argv)
     // ------------ Compute the distance between families -----------
     distance1 = ComputeFamilyDistance_Edit(&f1, &f2);
     distance2 = ComputeFamilyDistance_Jaccard(&f1, &f2);
-    printf("Distance using metric 1. (distance based on Levenshtein distance and Hungarian assignment problem): %d\n", distance1);
-    printf("Distance using metric 2. (distance based on Jaccard metric and set conversion): %f\n", distance2);
+    trace(0, TRACE_HEADER, "Final results:\n");
+    trace(0, STD, "Distance using metric 1. (distance based on Levenshtein distance and Hungarian assignment problem): %d\n", distance1);
+    trace(0, STD, "Distance using metric 2. (distance based on Jaccard metric and set conversion): %f\n", distance2);
 
 
 	// -------------------- Free allocated memory --------------------
@@ -81,4 +82,4 @@ int main(int argc, const char **argv)
     DeleteFamily(&f2);
 
     return 0;
-}
+} // main

@@ -1,4 +1,6 @@
 #include "../include/jaccardDistance.h"
+#include "../include/utils.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -19,23 +21,20 @@ double ComputeFamilyDistance_Jaccard(struct Family* f1, struct Family* f2)
 	ConvertToJaccardFamily(f1, &jf1, size, maxValue);
 	ConvertToJaccardFamily(f2, &jf2, size, maxValue);
 
-	printf("Printing family 1.\n");
-	for (int i = 0; i < jf1.size; i++)
-	{
-		printf("%s\n", jf1.sets[i]);
-	}
-	
-	printf("Printing family 2.\n");
-	for (int i = 0; i < jf2.size; i++)
-	{
-		printf("%s\n", jf2.sets[i]);
-	}
+	// Print converted families
+	trace(2, TRACE_INTERNAL, "Families converted to sets of binary numbers:\n");
+	PrintJaccardFamily(&jf1, 1);
+	PrintJaccardFamily(&jf2, 2);
 
 	// Calculate Jaccard distance between families
 	sum = UnionJaccardFamilies(&jf1, &jf2);
 	intersection = IntersectionJaccardFamilies(&jf1, &jf2);
 	distance = ((double)sum - (double)intersection) / (double)sum;
-	printf("%d %d %f\n", sum, intersection, distance);
+
+	trace(2, TRACE_INTERNAL, "Jaccard distance internal results:\n");
+	trace(2, STD, "\t Union of families: %d\n", sum);
+	trace(2, STD, "\t Intersection of families: %d\n", intersection);
+	trace(2, STD, "\t Jaccard distance: %f\n\n", distance);
 	
 	return distance;
 } // ComputeFamilyDistance_Jaccard
@@ -174,3 +173,13 @@ int IntersectionJaccardFamilies(struct JaccardFamily* jf1, struct JaccardFamily*
 	
 	return count;
 } // IntersectionJaccardFamilies
+
+void PrintJaccardFamily(struct JaccardFamily* jf, int no)
+{
+	trace(2, STD, "Converted family %d:\n", no);
+	for (int i = 0; i < jf->size; i++)
+	{
+		trace(2, STD, "Set %d: %s\n", i + 1, jf->sets[i]);
+	}
+	trace(2, STD, "\n");
+}

@@ -1,6 +1,8 @@
 #ifndef HUNGARIAN_H
 #define HUNGARIAN_H
 
+#include "../include/utils.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -10,15 +12,15 @@
 
 int  AssignmentProblemSolver(int** costMatrix, int size);
 
-int  ComputeAssignmentCost();
+int  ComputeAssignmentCost(void);
 
-void InitializeMatching();
-void FirstMatching();
+void InitializeMatching(void);
+void FirstMatching(void);
 
-void InitializeSets();
+void InitializeSets(void);
 
-void InitializeLabels();
-void UpdateLabels();
+void InitializeLabels(void);
+void UpdateLabels(void);
 
 void AddToTree(int currentVertex, int prevVertex);
 
