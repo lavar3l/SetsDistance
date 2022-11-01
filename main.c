@@ -4,6 +4,7 @@
 #include "include/defines.h"
 #include "include/utils.h"
 #include "include/data.h"
+#include "include/fileParser.h"
 
 #include "include/editDistance.h"
 #include "include/jaccardDistance.h"
