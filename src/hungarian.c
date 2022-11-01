@@ -44,6 +44,11 @@ int AssignmentProblemSolver(int** costMatrix, int size)
 
 	prev = (int*)malloc(gSize * sizeof(int)); // Alternating paths
 
+	if (lx == NULL || ly == NULL || matchX == NULL || matchY == NULL || S == NULL || T == NULL || slack == NULL || slackX == NULL || prev == NULL)
+	{
+		ExitError("Error allocating memory for Hungarian algorithm auxiliary structures!\n");
+	}
+
 	// Prepare matching and labels 
 	InitializeMatching();
 	InitializeLabels();
@@ -78,11 +83,15 @@ int ComputeAssignmentCost(void)
 {
 	int* q;
 	int start = 0, end = 0;
-	int root, x, y;
+	int root, x = 0, y = 0;
 	int result;
 
 	// Initialize queue for BFS traversal
 	q = (int*)malloc(gSize * sizeof(int));
+	if (q == NULL)
+	{
+		ExitError("Error allocating memory for BFS queue!\n");
+	}
 
 	// Iterate until all tasks are assigned to workers
 	while (gMaxMatch != gSize)

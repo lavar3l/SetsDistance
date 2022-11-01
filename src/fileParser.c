@@ -27,6 +27,10 @@ void ReadFamily(struct Family* f, FILE* inputFile)
 
 	// Allocate memory for the sets
 	f->sets = (struct Set*)malloc(f->size * sizeof(struct Set));
+	if (f->sets == NULL)
+	{
+		ExitError("Error allocating memory for family sets!\n");
+	}
 
 	// Read the sets
 	for (int i = 0; i < f->size; i++)
@@ -42,6 +46,10 @@ void ReadSet(struct Set* s, FILE* inputFile)
 
 	// Allocate memory for the elements
 	s->elements = (int*)malloc(s->size * sizeof(int));
+	if (s->elements == NULL)
+	{
+		ExitError("Error allocating memory for family set elements!\n");
+	}
 
 	// Read the elements
 	for (int i = 0; i < s->size; i++)

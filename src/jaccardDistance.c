@@ -62,11 +62,19 @@ void ConvertToJaccardFamily(struct Family* f, struct JaccardFamily* jf, int targ
 	// Allocate memory for the sets
 	jf->size = targetSize;
 	jf->sets = (char**)malloc(targetSize * sizeof(char*));
+	if (jf->sets == NULL)
+	{
+		ExitError("Error allocating memory for Jaccard family sets!\n");
+	}
 
 	// Allocate memory for the elements
 	for (int i = 0; i < targetSize; i++)
 	{
 		jf->sets[i] = (char*)malloc((maxValue + 2) * sizeof(char));
+		if (jf->sets[i] == NULL)
+		{
+			ExitError("Error allocating memory for Jaccard family sets!\n");
+		}
 	}
 
 	// Covert the sets to Jaccard sets

@@ -1,5 +1,6 @@
 #include "../include/editDistance.h"
 #include "../include/hungarian.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -14,9 +15,18 @@ int ComputeFamilyDistance_Edit(struct Family* f1, struct Family* f2)
 
 	// Initialize the edit distance matrix
 	editDistance = (int**)malloc(size * sizeof(int*));
+	if (editDistance == NULL)
+	{
+		ExitError("Error allocating memory for edit distance matrix!\n");
+	}
+
 	for (int i = 0; i < size; i++)
 	{
 		editDistance[i] = (int*)malloc(size * sizeof(int));
+		if (editDistance[i] == NULL)
+		{
+			ExitError("Error allocating memory for edit distance matrix!\n");
+		}
 	}
 
 	// Compute editorial distance between sets
@@ -75,9 +85,18 @@ int ComputeEditDistanceSets(struct Set* s1, struct Set* s2)
 
 	// Initialize the editorial distance matrix
 	distance = (int**)malloc((s2->size + 1) * sizeof(int*));
+	if (distance == NULL)
+	{
+		ExitError("Error allocating memory for cost distance matrix!\n");
+	}
+	
 	for (int i = 0; i < s2->size + 1; i++)
 	{
 		distance[i] = (int*)malloc((s1->size + 1 * sizeof(int)));
+		if (distance[i] == NULL)
+		{
+			ExitError("Error allocating memory for cost distance matrix!\n");
+		}
 	}
 
 	// Initialize the edge cases
