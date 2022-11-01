@@ -14,7 +14,7 @@ void ExitError(char* message)
 
 void trace(int level, const char* format, ...)
 {
-	if (level < gTraceLevel)
+	if (level <= gTraceLevel)
 	{
 		va_list args;
 		va_start(args, format);
