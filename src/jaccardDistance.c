@@ -29,7 +29,17 @@ double ComputeFamilyDistance_Jaccard(struct Family* f1, struct Family* f2)
 	// Calculate Jaccard distance between families
 	sum = UnionJaccardFamilies(&jf1, &jf2);
 	intersection = IntersectionJaccardFamilies(&jf1, &jf2);
-	distance = ((double)sum - (double)intersection) / (double)sum;
+
+	if (sum > 0)
+	{
+		distance = ((double)sum - (double)intersection) / (double)sum;
+	}
+	else
+	{
+		// If sum is equal to 0, then both families are empty.
+		// In this case, the distance is 0, because the families are identical.
+		distance = 0;
+	}
 
 	trace(2, TRACE_INTERNAL, "Jaccard distance internal results:\n");
 	trace(2, STD, "\t Union of families: %d\n", sum);
