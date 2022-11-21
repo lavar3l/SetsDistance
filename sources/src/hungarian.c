@@ -3,8 +3,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#define INF 1000000000 // unreachable (inifite) value
-#define N 100
+#define INF 1000000000 // unreachable (infinite) value
 
 int gSize; // number of workers and assignments
 int** gCost; // matrix with the cost of performing each assignment by each worker
@@ -32,7 +31,7 @@ int AssignmentProblemSolver(int** costMatrix, int size)
 	gSize = size;
 	gCost = costMatrix;
 
-	// Initalize auxiliary structures
+	// Initialize auxiliary structures
 	lx = (int*)malloc(gSize * sizeof(int)); // labels of X part
 	ly = (int*)malloc(gSize * sizeof(int)); // labels of Y part
 
