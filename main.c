@@ -16,8 +16,8 @@ int gTraceLevel = 0;
 
 static const char* const usage[] = 
 {
-    "SetsDitance.exe --path [path to family data]",
-    "SetsDitance.exe --path [path to family data] --verbose [0-3 verbose level]",
+    "SetsDistance.exe --path [path to family data]",
+    "SetsDistance.exe --path [path to family data] --verbose [0-3 verbose level]",
     NULL,
 };
 

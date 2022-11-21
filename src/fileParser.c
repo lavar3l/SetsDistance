@@ -1,4 +1,5 @@
 #include "../include/fileParser.h"
+#include "../include/utils.h"
 
 void ReadFile(char* filename, struct Family* f1, struct Family* f2)
 {
