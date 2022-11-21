@@ -1,5 +1,8 @@
 #include "../include/hungarian.h"
 
+#include <stdlib.h>
+#include <stdbool.h>
+
 #define INF 1000000000 // unreachable (inifite) value
 #define N 100
 
