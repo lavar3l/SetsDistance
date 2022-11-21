@@ -1,6 +1,9 @@
 #include "../include/data.h"
 #include "../include/utils.h"
 
+#include <stdlib.h>
+
+
 void PrintFamily(struct Family* f)
 {
 	trace(1, STD, "Family with %d sets:\n", f->size);

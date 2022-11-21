@@ -60,7 +60,7 @@ int AssignmentProblemSolver(int** costMatrix, int size)
 	gMaxMatch = 0;
 	FirstMatching();
 
-	// Realize the Hungarian algorith
+	// Realize the Hungarian algorithm
 	result = ComputeAssignmentCost();
 
 	// Free memory	
