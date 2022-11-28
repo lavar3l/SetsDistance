@@ -92,7 +92,7 @@ int ComputeEditDistanceSets(struct Set* s1, struct Set* s2)
 	
 	for (int i = 0; i < s2->size + 1; i++)
 	{
-		distance[i] = (int*)malloc((s1->size + 1 * sizeof(int)));
+		distance[i] = (int*)malloc((s1->size + 1) * sizeof(int));
 		if (distance[i] == NULL)
 		{
 			ExitError("Error allocating memory for cost distance matrix!\n");
@@ -131,6 +131,10 @@ int ComputeEditDistanceSets(struct Set* s1, struct Set* s2)
 	editDistance = distance[s2->size][s1->size];
 
 	// Free memory
+	for (int i = 0; i <= s2->size; i++)
+	{
+		free(distance[i]);
+	}
 	free(distance);
 
 	return editDistance;
