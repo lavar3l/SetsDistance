@@ -7,19 +7,16 @@
 double ComputeFamilyDistance_Jaccard(struct Family* f1, struct Family* f2)
 {
 	struct JaccardFamily jf1, jf2;
-	int size, maxValue;
+	int maxValue;
 	int sum, intersection;
 	double distance;
-
-	// Compute the size of the Jaccard family
-	size = max(f1->size, f2->size);
 
 	// Get the maximum value from the sets
 	maxValue = max(GetMaxValueFromSets(f1), GetMaxValueFromSets(f2));
 
 	// Convert the families to sets of numbers
-	ConvertToJaccardFamily(f1, &jf1, size, maxValue);
-	ConvertToJaccardFamily(f2, &jf2, size, maxValue);
+	ConvertToJaccardFamily(f1, &jf1, maxValue);
+	ConvertToJaccardFamily(f2, &jf2, maxValue);
 
 	// Print converted families
 	trace(2, TRACE_INTERNAL, "Families converted to sets of binary numbers:\n");
@@ -67,18 +64,18 @@ int GetMaxValueFromSets(struct Family* f)
 	return max;
 } // GetMaxValueFromSets
 
-void ConvertToJaccardFamily(struct Family* f, struct JaccardFamily* jf, int targetSize, int maxValue)
+void ConvertToJaccardFamily(struct Family* f, struct JaccardFamily* jf, int maxValue)
 {
 	// Allocate memory for the sets
-	jf->size = targetSize;
-	jf->sets = (char**)malloc(targetSize * sizeof(char*));
+	jf->size = f->size;
+	jf->sets = (char**)malloc(jf->size * sizeof(char*));
 	if (jf->sets == NULL)
 	{
 		ExitError("Error allocating memory for Jaccard family sets!\n");
 	}
 
 	// Allocate memory for the elements
-	for (int i = 0; i < targetSize; i++)
+	for (int i = 0; i < jf->size; i++)
 	{
 		jf->sets[i] = (char*)malloc((maxValue + 2) * sizeof(char));
 		if (jf->sets[i] == NULL)
@@ -94,14 +91,8 @@ void ConvertToJaccardFamily(struct Family* f, struct JaccardFamily* jf, int targ
 		ConvertToJaccardSet(&f->sets[i], jf->sets[i], maxValue);
 	}
 
-	// Fill the remaining sets with 0
-	for (int i = f->size; i < targetSize; i++)
-	{
-		InitializeEmptyJaccardSet(jf->sets[i], maxValue);
-	}
-
 	// Sort the sets
-	SortJaccardSets(jf, targetSize, maxValue);
+	SortJaccardSets(jf, maxValue);
 } // ConvertToJaccardFamily
 
 void InitializeEmptyJaccardSet(char* js, int maxValue)
@@ -126,10 +117,10 @@ void ConvertToJaccardSet(struct Set* s, char* js, int maxValue)
 	}
 } // ConvertToJaccardSet
 
-void SortJaccardSets(struct JaccardFamily* jf, int targetSize, int maxValue)
+void SortJaccardSets(struct JaccardFamily* jf, int maxValue)
 {
 	// Sort the sets using QuickSort algorithm
-	qsort(jf->sets, targetSize, sizeof(char*), CompareJaccardSets);
+	qsort(jf->sets, jf->size, sizeof(char*), CompareJaccardSets);
 } // SortJaccardSets
 
 int CompareJaccardSets(const void* a, const void* b)
